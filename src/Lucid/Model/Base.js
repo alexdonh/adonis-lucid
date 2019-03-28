@@ -58,7 +58,7 @@ class BaseModel {
    * @static
    */
   static get createdAtColumn () {
-    return 'created_at'
+    return 'createdAt'
   }
 
   /**
@@ -71,7 +71,7 @@ class BaseModel {
    * @static
    */
   static get updatedAtColumn () {
-    return 'updated_at'
+    return 'updatedAt'
   }
 
   /**

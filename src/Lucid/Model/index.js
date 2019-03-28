@@ -111,7 +111,7 @@ class Model extends BaseModel {
    * ``
    */
   static get foreignKey () {
-    return util.makeForeignKey(this.name)
+    return `${_.camelCase(this.name)}Id`
   }
 
   /**
@@ -175,14 +175,14 @@ class Model extends BaseModel {
    * @example
    * ```
    * Model - User
-   * table - users
+   * table - user
    *
    * Model - Person
-   * table - people
+   * table - person
    * ```
    */
   static get table () {
-    return util.makeTableName(this.name)
+    return _.snakeCase(this.name)
   }
 
   /**
