@@ -963,7 +963,7 @@ class Model extends BaseModel {
    */
   static first () {
     if (_.isArray(this.primaryKey)) {
-      const orders = this.primaryKey.map((value) => { column: value, order: 'asc' })
+      const orders = this.primaryKey.map((value) => ({ column: value, order: 'asc' }))
       return this.query().orderBy(orders).first()
     }
     return this.query().orderBy(this.primaryKey, 'asc').first()
@@ -982,7 +982,7 @@ class Model extends BaseModel {
    */
   static firstOrFail () {
     if (_.isArray(this.primaryKey)) {
-      const orders = this.primaryKey.map((value) => { column: value, order: 'asc' })
+      const orders = this.primaryKey.map((value) => ({ column: value, order: 'asc' }))
       return this.query().orderBy(orders).firstOrFail()
     }
     return this.query().orderBy(this.primaryKey, 'asc').firstOrFail()
