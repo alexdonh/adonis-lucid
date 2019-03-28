@@ -64,15 +64,15 @@ class PivotModel extends BaseModel {
     /**
      * Set created at by default
      */
-    if (this.$attributes.created_at) {
-      this.$attributes.created_at = moment(this.$attributes.created_at)
+    if (this.$attributes.createdAt) {
+      this.$attributes.createdAt = moment(this.$attributes.createdAt)
     }
 
     /**
      * Set updated at by default
      */
-    if (this.$attributes.updated_at) {
-      this.$attributes.updated_at = moment(this.$attributes.updated_at)
+    if (this.$attributes.updatedAt) {
+      this.$attributes.updatedAt = moment(this.$attributes.updatedAt)
     }
 
     /**
@@ -154,8 +154,8 @@ class PivotModel extends BaseModel {
      * relationship via `withTimestamps` method.
      */
     if (this.$withTimestamps) {
-      this.$attributes['created_at'] = moment().format(DATE_FORMAT)
-      this.$attributes['updated_at'] = moment().format(DATE_FORMAT)
+      this.$attributes['createdAt'] = moment().format(DATE_FORMAT)
+      this.$attributes['updatedAt'] = moment().format(DATE_FORMAT)
     }
 
     const query = this.query(this.$table, this.$connection)
