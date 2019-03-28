@@ -138,6 +138,9 @@ class Model extends BaseModel {
    * @return {Mixed}
    */
   get primaryKeyValue () {
+    if (_.isArray(this.constructor.primaryKey)) {
+      return _.pick(this.$attributes, this.constructor.primaryKey)
+    }
     return this.$attributes[this.constructor.primaryKey]
   }
 
@@ -158,7 +161,12 @@ class Model extends BaseModel {
    * @return {void}
    */
   set primaryKeyValue (value) {
-    this.$attributes[this.constructor.primaryKey] = value
+    if (_.isArray(this.constructor.primaryKey) && _.isObject(value)) {
+      const values = _.pick(value, this.constructor.primaryKey)
+      this.$attributes = _.assign(this.$attributes, values)
+    } else {
+      this.$attributes[this.constructor.primaryKey] = value  
+    }
   }
 
   /**
@@ -670,8 +678,15 @@ class Model extends BaseModel {
       this._setUpdatedAt(this.$attributes)
       this._formatDateFields(this.$attributes)
 
+      if (_.isArray(this.constructor.primaryKey) && _.isObject(this.primaryKeyValue)) {
+        for (const key of this.primaryKeyValue) {
+          query.andWhere(key, this.primaryKeyValue[key])
+        }
+      } else {
+        query.where(this.constructor.primaryKey, this.primaryKeyValue)
+      }
+
       affected = await query
-        .where(this.constructor.primaryKey, this.primaryKeyValue)
         .ignoreScopes()
         .update(this)
     }
@@ -811,9 +826,18 @@ class Model extends BaseModel {
      */
     await this.constructor.$hooks.before.exec('delete', this)
 
-    const affected = await this.constructor
-      .query()
-      .where(this.constructor.primaryKey, this.primaryKeyValue)
+    let affected = 0
+    const query = this.constructor.query()
+
+    if (_.isArray(this.constructor.primaryKey) && _.isObject(this.primaryKeyValue)) {
+      for (const key of this.primaryKeyValue) {
+        query.andWhere(key, this.primaryKeyValue[key])
+      }
+    } else {
+      query.where(this.constructor.primaryKey, this.primaryKeyValue)
+    }
+
+    affected = await query
       .ignoreScopes()
       .delete()
 
@@ -859,6 +883,14 @@ class Model extends BaseModel {
    * @return {Model|Null}
    */
   static find (value) {
+    if (_.isObject(value) && _.isArray(this.primaryKey)) {
+      const values = _.pick(value, this.primaryKey)
+      const query = this.query()
+      for (const key in values) {
+        query.andWhere(key, values[key])
+      }
+      return query.first()
+    }
     return this.findBy(this.primaryKey, value)
   }
 
@@ -876,6 +908,14 @@ class Model extends BaseModel {
    * @throws {ModelNotFoundException} If unable to find row
    */
   static findOrFail (value) {
+    if (_.isObject(value) && _.isArray(this.primaryKey)) {
+      const values = _.pick(value, this.primaryKey)
+      const query = this.query()
+      for (const key in values) {
+        query.andWhere(key, values[key])
+      }
+      return query.firstOrFail()
+    }
     return this.findByOrFail(this.primaryKey, value)
   }
 
@@ -922,6 +962,10 @@ class Model extends BaseModel {
    * @return {Model|Null}
    */
   static first () {
+    if (_.isArray(this.primaryKey)) {
+      const orders = this.primaryKey.map((value) => { column: value, order: 'asc' })
+      return this.query().orderBy(orders).first()
+    }
     return this.query().orderBy(this.primaryKey, 'asc').first()
   }
 
@@ -937,6 +981,10 @@ class Model extends BaseModel {
    * @throws {ModelNotFoundException} If unable to find row
    */
   static firstOrFail () {
+    if (_.isArray(this.primaryKey)) {
+      const orders = this.primaryKey.map((value) => { column: value, order: 'asc' })
+      return this.query().orderBy(orders).firstOrFail()
+    }
     return this.query().orderBy(this.primaryKey, 'asc').firstOrFail()
   }
 
