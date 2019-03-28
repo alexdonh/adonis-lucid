@@ -55,13 +55,13 @@ class Factory {
    * })
    * ```
    */
-  blueprint (name, callback) {
+  blueprint (name, callback, faker = undefined) {
     if (typeof (callback) !== 'function') {
       throw GE
         .InvalidArgumentException
         .invalidParameter('Factory.blueprint expects a callback as 2nd parameter', callback)
     }
-    this._blueprints.push({ name, callback })
+    this._blueprints.push({ name, callback, faker })
     return this
   }
 
@@ -90,7 +90,7 @@ class Factory {
    */
   model (name) {
     const blueprint = this.getBlueprint(name)
-    return new ModelFactory(blueprint.name, blueprint.callback)
+    return new ModelFactory(blueprint.name, blueprint.callback, blueprint.faker)
   }
 
   /**
@@ -104,7 +104,7 @@ class Factory {
    */
   get (name) {
     const blueprint = this.getBlueprint(name)
-    return new DatabaseFactory(blueprint.name, blueprint.callback)
+    return new DatabaseFactory(blueprint.name, blueprint.callback, blueprint.faker)
   }
 
   /**

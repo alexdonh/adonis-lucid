@@ -21,9 +21,10 @@ const { ioc } = require('../../lib/iocResolver')
  * @constructor
  */
 class ModelFactory {
-  constructor (Model, dataCallback) {
+  constructor (Model, dataCallback, faker = undefined) {
     this.Model = Model
     this.dataCallback = dataCallback
+    this.faker = faker || chancejs
   }
 
   /**
@@ -59,7 +60,7 @@ class ModelFactory {
    * @private
    */
   async _makeOne (index, data) {
-    const hash = await this.dataCallback(chancejs, index, data)
+    const hash = await this.dataCallback(this.faker, index, data)
     const keys = _.keys(hash)
 
     /**
