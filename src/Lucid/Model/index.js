@@ -165,7 +165,7 @@ class Model extends BaseModel {
       const values = _.pick(value, this.constructor.primaryKey)
       this.$attributes = _.assign(this.$attributes, values)
     } else {
-      this.$attributes[this.constructor.primaryKey] = value  
+      this.$attributes[this.constructor.primaryKey] = value
     }
   }
 
@@ -625,7 +625,7 @@ class Model extends BaseModel {
      * Only set the primary key value when incrementing is
      * set to true on model
      */
-    if (this.constructor.incrementing) {
+    if (this.constructor.incrementing && !_.isArray(this.constructor.primaryKey)) {
       this.primaryKeyValue = result[0]
     }
 
@@ -679,7 +679,7 @@ class Model extends BaseModel {
       this._formatDateFields(this.$attributes)
 
       if (_.isArray(this.constructor.primaryKey) && _.isObject(this.primaryKeyValue)) {
-        for (const key of this.primaryKeyValue) {
+        for (const key in this.primaryKeyValue) {
           query.andWhere(key, this.primaryKeyValue[key])
         }
       } else {
@@ -830,7 +830,7 @@ class Model extends BaseModel {
     const query = this.constructor.query()
 
     if (_.isArray(this.constructor.primaryKey) && _.isObject(this.primaryKeyValue)) {
-      for (const key of this.primaryKeyValue) {
+      for (const key in this.primaryKeyValue) {
         query.andWhere(key, this.primaryKeyValue[key])
       }
     } else {
