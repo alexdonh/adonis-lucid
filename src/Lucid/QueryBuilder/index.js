@@ -342,7 +342,7 @@ class QueryBuilder {
      * Fire afterFetch event
      */
     if (this.Model.$hooks) {
-      await this.Model.$hooks.after.exec('fetch', modelInstances)
+      await this.Model.$hooks.after.exec('fetch', modelInstances, this)
     }
 
     const Serializer = this.Model.resolveSerializer()
@@ -373,7 +373,7 @@ class QueryBuilder {
     await this._eagerLoad([modelInstance])
 
     if (this.Model.$hooks) {
-      await this.Model.$hooks.after.exec('find', modelInstance)
+      await this.Model.$hooks.after.exec('find', modelInstance, this)
     }
 
     return modelInstance
@@ -411,7 +411,7 @@ class QueryBuilder {
     }
 
     if (this.Model.$hooks) {
-      await this.Model.$hooks.after.exec('find', modelInstance)
+      await this.Model.$hooks.after.exec('find', modelInstance, this)
     }
 
     return modelInstance
@@ -472,7 +472,7 @@ class QueryBuilder {
      * Fire afterPaginate event
      */
     if (this.Model.$hooks) {
-      await this.Model.$hooks.after.exec('paginate', modelInstances, pages)
+      await this.Model.$hooks.after.exec('paginate', modelInstances, pages, this)
     }
 
     /**
